@@ -1,0 +1,2 @@
+export const teamList =
+  "1. Igor (ATA) - 6,22  2. André (MEI) - 6,00  3. Ademir (MEI) - 7,72  4. David (ZAG) - 6,72  5. Leo Ribeiro (MEI) - 7,28  6. Kelvin (ATA) - 7,88  7. Thiago Braga (ZAG) - 5,36  8. Olavo (ZAG) - 7,56  9. Otávio (GOL) - 5,00  10. Drago (GOL) - 8,50 11. Ferlini (MEI) - 5.88  12. Victor Braga (ZAG) - 7.12.   13. Johnatan (MEI) - 5,94  14. Léo Oliveira (ATA) - 5,22  15. Blasque (MEI) - 5,78  16. Mau (MEI) - 6,94  17. Thiago Loiola (ATA) - 7,88  18. JP (GOL) - 7,66  19. Ricardo (ZAG) - 8.12  20. Rafa (ATA) - 5,78  21. Lucao (MEI) - 6,22";
