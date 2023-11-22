@@ -6,6 +6,7 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
     const filteredTeamList = this.splitValues(teamList);
     const players = this.randomize(filteredTeamList);
     const team = this.creatingOptions(players);
+
     const optionTeams = {
       TimeAzul: team.Azul,
       NotaTimeAzul: team.Azul.reduce(
@@ -26,12 +27,40 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
 
     return optionTeams;
   }
+
   randomize(teamList: PlayerListType[]) {
-    for (let i = teamList.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [teamList[i], teamList[j]] = [teamList[j], teamList[i]];
+    const shuffledTeams: { [key: string]: PlayerListType[] } = {
+      GOL: [],
+      ZAG: [],
+      MEI: [],
+      ATA: [],
+    };
+
+    for (const player of teamList) {
+      if (!shuffledTeams[player.position]) {
+        shuffledTeams[player.position] = [];
+      }
+      shuffledTeams[player.position].push(player);
     }
-    return teamList;
+
+    // Embaralha cada subgrupo
+    for (const position in shuffledTeams) {
+      shuffledTeams[position] = this.shuffle(shuffledTeams[position]);
+    }
+
+    // Concatena os subgrupos e retorna a lista final
+    return [].concat(
+      ...Object.keys(shuffledTeams).map((position) => shuffledTeams[position])
+    );
+  }
+
+  // Função para embaralhar um array
+  shuffle(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   splitValues(teamList: string) {
@@ -50,6 +79,7 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
     }
     return playersArray;
   }
+
   creatingOptions(teamList: PlayerListType[]): {
     [key: string]: PlayerListType[];
   } {
@@ -65,24 +95,26 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
       (a, b) => b.rating - a.rating
     );
 
-    const distribuirTeamListType = (
-      jogador: PlayerListType,
-      timeMenorNota = "Azul"
-    ) => {
-      let menorNota = calcularNotaTime(times.Azul);
+    const distribuirEquitativamente = (jogadoresPosicao: PlayerListType[]) => {
+      let timeIndex = 0;
 
-      for (const time in times) {
-        const notaAtual = calcularNotaTime(times[time]);
-        if (notaAtual < menorNota) {
-          menorNota = notaAtual;
-          timeMenorNota = time;
+      for (const jogador of jogadoresPosicao) {
+        const currentTime = Object.keys(times)[timeIndex];
+
+        if (times[currentTime].length < 7) {
+          times[currentTime].push(jogador);
+        } else {
+          // Encontre o próximo time disponível
+          let nextTimeIndex = (timeIndex + 1) % Object.keys(times).length;
+          while (times[Object.keys(times)[nextTimeIndex]].length >= 7) {
+            nextTimeIndex = (nextTimeIndex + 1) % Object.keys(times).length;
+          }
+
+          times[Object.keys(times)[nextTimeIndex]].push(jogador);
         }
-      }
-      times[timeMenorNota].push(jogador);
-    };
 
-    const calcularNotaTime = (time: PlayerListType[]): number => {
-      return time.reduce((total, jogador) => total + jogador.rating, 0);
+        timeIndex = (timeIndex + 1) % Object.keys(times).length;
+      }
     };
 
     for (let i = 0; i < posicoesNecessarias.length; i++) {
@@ -90,10 +122,9 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
         (jogador) => jogador.position === posicoesNecessarias[i]
       );
 
-      for (const jogador of jogadoresPosicao) {
-        distribuirTeamListType(jogador);
-      }
+      distribuirEquitativamente(jogadoresPosicao);
     }
+
     return times;
   }
 }
