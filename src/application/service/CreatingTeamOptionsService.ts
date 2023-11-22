@@ -8,12 +8,22 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
     const team = this.creatingOptions(players);
     const optionTeams = {
       TimeAzul: team.Azul,
-      NotaTimeAzul: this.sumTeamRating(team.Azul),
-      TimeBranco: team.Azul,
-      NotaTimeBranco: this.sumTeamRating(team.Branco),
-      TimeLaranja: team.Azul,
-      NotaTimeLaranja: this.sumTeamRating(team.Laranja),
+      NotaTimeAzul: team.Azul.reduce(
+        (total, player) => total + player.rating,
+        0
+      ),
+      TimeBranco: team.Branco,
+      NotaTimeBranco: team.Branco.reduce(
+        (total, player) => total + player.rating,
+        0
+      ),
+      TimeLaranja: team.Laranja,
+      NotaTimeLaranja: team.Laranja.reduce(
+        (total, player) => total + player.rating,
+        0
+      ),
     };
+
     return optionTeams;
   }
   randomize(teamList: PlayerListType[]) {
@@ -23,13 +33,7 @@ export class CreatingTeamOptionsService implements CreatingTeamOptionUseCase {
     }
     return teamList;
   }
-  sumTeamRating(players: PlayerListType[]) {
-    let totalSum = 0;
-    for (let i = 0; i < players.length; i++) {
-      totalSum += players[i].rating;
-    }
-    return totalSum;
-  }
+
   splitValues(teamList: string) {
     const regex = /(\d+)\.\s(.*?)\s\((.*?)\)\s-\s(.*?)(?=\s\d|$)/g;
 
