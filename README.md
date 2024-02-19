@@ -1,0 +1,1 @@
+Programa feito para receber um array de jogadores com as suas respectivas notas e posições. Fazendo com que assim os times sejam separados respeitando a média total e a correta distribuição das suas posições.
